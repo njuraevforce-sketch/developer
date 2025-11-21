@@ -396,6 +396,16 @@
             padding: 20px;
             color: #666;
         }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 16px;
+            border-radius: 12px;
+            margin: 20px;
+            text-align: center;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -408,6 +418,7 @@
     </div>
 
     <div class="container">
+        <div class="error-message" id="errorMessage"></div>
         <div class="app-grid" id="appsGrid">
             <div class="loading">Загрузка приложений...</div>
         </div>
@@ -464,13 +475,36 @@
         </div>
     </div>
 
-    <a href="admin.html" class="admin-fab">👨‍💼</a>
+    <a href="admin.html" class="admin-fab" onclick="return checkAdminAccess()">👨‍💼</a>
 
     <script>
-        // Инициализация Supabase
-        const supabaseUrl = 'https://egjtgqhuvgfzbuwmzgvd.supabase.co';
-        const supabaseKey = 'sb_publishable_63fSlgFk4VRjgJ340gp3Ag_2Xh8_OX4';
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        // Инициализация Supabase с обработкой ошибок
+        let supabase;
+        try {
+            const supabaseUrl = 'https://egjtgqhuvgfzbuwmzgvd.supabase.co';
+            const supabaseKey = 'sb_publishable_63fSlgFk4VRjgJ340gp3Ag_2Xh8_OX4';
+            supabase = window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
+            console.log('Supabase инициализирован');
+        } catch (error) {
+            console.error('Ошибка инициализации Supabase:', error);
+            showError('Ошибка подключения к базе данных');
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function checkAdminAccess() {
+            const password = prompt('Введите пароль для доступа к админ-панели:');
+            if (password === 'admin123') {
+                return true;
+            } else {
+                alert('Неверный пароль!');
+                return false;
+            }
+        }
 
         const applications = [
             {
