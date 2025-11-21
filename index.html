@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Financial Apps</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .header {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .support-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #4CAF50;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .container {
+            margin-top: 80px;
+            padding: 0 16px;
+        }
+
+        .app-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .app-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 20px;
+            color: #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-card:active {
+            transform: scale(0.98);
+        }
+
+        .app-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #FF6B35;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .app-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .app-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+
+        .app-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        .app-preview {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .preview-img {
+            width: 80px;
+            height: 160px;
+            border-radius: 12px;
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+            border: 2px solid #ddd;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            overflow: hidden;
+        }
+
+        .preview-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .delivery-time {
+            background: #E3F2FD;
+            color: #1976D2;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .payment-info {
+            background: #E8F5E8;
+            color: #2E7D32;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .view-details-btn {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        /* Детальная страница приложения */
+        .app-detail {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 2000;
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            color: #333;
+        }
+
+        .app-detail.active {
+            transform: translateX(0);
+        }
+
+        .detail-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 20px 20px 20px;
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+
+        .detail-icon {
+            font-size: 64px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .detail-title {
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .detail-subtitle {
+            text-align: center;
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .gallery-section {
+            padding: 20px;
+        }
+
+        .gallery-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #1a1a1a;
+        }
+
+        .gallery-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+        }
+
+        .gallery-item {
+            width: 280px;
+            height: 500px;
+            border-radius: 20px;
+            background: #f8f9fa;
+            flex-shrink: 0;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid #e0e0e0;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .features-section {
+            padding: 20px;
+        }
+
+        .features-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .feature-item {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 12px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #1a1a1a;
+        }
+
+        .feature-desc {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .info-section {
+            padding: 20px;
+            background: #f8f9fa;
+            margin: 20px;
+            border-radius: 20px;
+        }
+
+        .info-card {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .info-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-text {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .order-section {
+            padding: 20px;
+        }
+
+        .order-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .support-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .support-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .support-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .telegram-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #0088cc;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .admin-fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2196F3;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            text-decoration: none;
+            box-shadow: 0 8px 20px rgba(33, 150, 243, 0.4);
+            z-index: 1000;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <div class="header">
+        <h1>💰 Financial Apps</h1>
+        <div class="support-badge">
+            <span>🛎️</span>
+            Поддержка 24/7
+        </div>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="container">
+        <div class="app-grid" id="appsGrid">
+            <div class="loading">Загрузка приложений...</div>
+        </div>
+    </div>
+
+    <!-- Детальная страница приложения -->
+    <div class="app-detail" id="appDetail">
+        <div class="detail-header">
+            <button class="back-btn" onclick="closeAppDetail()">←</button>
+            <div class="detail-icon" id="detailIcon">📱</div>
+            <h1 class="detail-title" id="detailTitle">Название приложения</h1>
+            <div class="detail-subtitle" id="detailSubtitle">Описание приложения</div>
+        </div>
+
+        <div class="gallery-section">
+            <h2 class="gallery-title">📸 Скриншоты приложения</h2>
+            <div class="gallery-scroll" id="appGallery">
+                <!-- Галерея загружается через JS -->
+            </div>
+        </div>
+
+        <div class="features-section">
+            <h2 class="gallery-title">⭐ Функции</h2>
+            <div class="features-grid" id="appFeatures">
+                <!-- Функции загружаются через JS -->
+            </div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-card">
+                <div class="info-title">🚀 Срок разработки</div>
+                <div class="info-text">Мы подготовим ваше приложение за 3-7 дней</div>
+            </div>
+            <div class="info-card">
+                <div class="info-title">💳 Условия оплаты</div>
+                <div class="info-text">
+                    • Оплата после успешного запуска приложения<br>
+                    • Бесплатно при наличии команды для продвижения<br>
+                    • В остальных случаях цена обсуждается с менеджером
+                </div>
+            </div>
+        </div>
+
+        <div class="support-section">
+            <div class="support-icon">🛎️</div>
+            <div class="support-title">Поддержка 24/7</div>
+            <p>Есть вопросы? Напишите нам в Telegram</p>
+            <a href="https://t.me/developer_com1" class="telegram-btn" target="_blank">
+                📨 @developer_com1
+            </a>
+        </div>
+
+        <div class="order-section">
+            <button class="order-btn" onclick="openOrderForm()">🛒 Заказать приложение</button>
+        </div>
+    </div>
+
+    <!-- Кнопка админа -->
+    <a href="admin.html" class="admin-fab">👨‍💼</a>
+
+    <script>
+        // Инициализация Supabase
+        const supabaseUrl = 'https://egjtgqhuvgfzbuwmzgvd.supabase.co';
+        const supabaseKey = 'sb_publishable_63fSlgFk4VRjgJ340gp3Ag_2Xh8_OX4';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // База данных приложений с изображениями
+        const applications = [
+            {
+                id: 1,
+                name: "Торговый терминал",
+                icon: "📊",
+                description: "Профессиональная платформа для торговли",
+                images: [
+                    "assets/trading_1.jpg",
+                    "assets/trading_2.jpg", 
+                    "assets/trading_3.jpg",
+                    "assets/trading_4.jpg",
+                    "assets/trading_5.jpg"
+                ],
+                features: [
+                    {
+                        title: "Real-time графики",
+                        description: "Мгновенное обновление цен и графиков"
+                    },
+                    {
+                        title: "Разные ордера",
+                        description: "Лимитные, рыночные и отложенные ордера"
+                    },
+                    {
+                        title: "Технический анализ",
+                        description: "Более 50 индикаторов и инструментов"
+                    },
+                    {
+                        title: "Безопасность",
+                        description: "Двухфакторная аутентификация и шифрование"
+                    }
+                ]
+            },
+            {
+                id: 2,
+                name: "Стейкинг платформа",
+                icon: "🏦",
+                description: "Пассивный заработок на стейкинге",
+                images: [
+                    "assets/staking_1.jpg",
+                    "assets/staking_2.jpg",
+                    "assets/staking_3.jpg",
+                    "assets/staking_4.jpg"
+                ],
+                features: [
+                    {
+                        title: "Автоматические выплаты",
+                        description: "Ежедневное начисление процентов"
+                    },
+                    {
+                        title: "Гибкие сроки",
+                        description: "От 7 дней до 12 месяцев"
+                    },
+                    {
+                        title: "Мониторинг",
+                        description: "Отслеживание доходности в реальном времени"
+                    }
+                ]
+            },
+            {
+                id: 3,
+                name: "Крипто-майнинг",
+                icon: "⛏️",
+                description: "Облачный майнинг с выплатами",
+                images: [
+                    "assets/mining_1.jpg",
+                    "assets/mining_2.jpg",
+                    "assets/mining_3.jpg",
+                    "assets/mining_4.jpg",
+                    "assets/mining_5.jpg",
+                    "assets/mining_6.jpg"
+                ],
+                features: [
+                    {
+                        title: "Аренда мощности",
+                        description: "Мощности от 1 TH/s до 1000 TH/s"
+                    },
+                    {
+                        title: "Авто-оптимизация",
+                        description: "Автоматический подбор алгоритмов"
+                    },
+                    {
+                        title: "Статистика",
+                        description: "Детальная статистика майнинга"
+                    }
+                ]
+            },
+            {
+                id: 4,
+                name: "DeFi агрегатор",
+                icon: "🔄",
+                description: "Все DeFi протоколы в одном месте",
+                images: [
+                    "assets/defi_1.jpg",
+                    "assets/defi_2.jpg",
+                    "assets/defi_3.jpg"
+                ],
+                features: [
+                    {
+                        title: "Сравнение доходности",
+                        description: "Автоматический поиск лучших ставок"
+                    },
+                    {
+                        title: "Ребалансировка",
+                        description: "Автоматическая оптимизация портфеля"
+                    },
+                    {
+                        title: "Анализ рисков",
+                        description: "Оценка рисков по каждому протоколу"
+                    }
+                ]
+            },
+            {
+                id: 5,
+                name: "Партнерская система",
+                icon: "👥",
+                description: "Многоуровневая реферальная программа",
+                images: [
+                    "assets/affiliate_1.jpg",
+                    "assets/affiliate_2.jpg",
+                    "assets/affiliate_3.jpg",
+                    "assets/affiliate_4.jpg"
+                ],
+                features: [
+                    {
+                        title: "MLM структура",
+                        description: "До 10 уровней рефералов"
+                    },
+                    {
+                        title: "Автовыплаты",
+                        description: "Автоматические выплаты комиссий"
+                    },
+                    {
+                        title: "Аналитика",
+                        description: "Детальная статистика привлечения"
+                    }
+                ]
+            },
+            {
+                id: 6,
+                name: "Мобильный кошелек",
+                icon: "💰",
+                description: "Безопасный кошелек с USDT",
+                images: [
+                    "assets/wallet_1.jpg",
+                    "assets/wallet_2.jpg",
+                    "assets/wallet_3.jpg",
+                    "assets/wallet_4.jpg",
+                    "assets/wallet_5.jpg"
+                ],
+                features: [
+                    {
+                        title: "Мульти-валютность",
+                        description: "Поддержка 50+ криптовалют"
+                    },
+                    {
+                        title: "Биометрия",
+                        description: "Face ID и Touch ID защита"
+                    },
+                    {
+                        title: "Быстрые транзакции",
+                        description: "Мгновенные переводы"
+                    }
+                ]
+            }
+        ];
+
+        // Загрузка приложений
+        function loadApplications() {
+            const appsGrid = document.getElementById('appsGrid');
+            appsGrid.innerHTML = '';
+            
+            applications.forEach(app => {
+                const appCard = document.createElement('div');
+                appCard.className = 'app-card';
+                appCard.innerHTML = `
+                    <div class="app-badge">NEW</div>
+                    <div class="app-icon">${app.icon}</div>
+                    <h2 class="app-title">${app.name}</h2>
+                    <p class="app-description">${app.description}</p>
+                    
+                    <div class="app-preview">
+                        ${app.images.slice(0, 3).map(img => 
+                            `<div class="preview-img">
+                                <img src="${img}" alt="${app.name}" onerror="this.style.display='none'; this.parentNode.innerHTML='📱';">
+                            </div>`
+                        ).join('')}
+                    </div>
+                    
+                    <div class="delivery-time">⏱️ Срок разработки: 3-7 дней</div>
+                    <div class="payment-info">💳 Оплата после запуска</div>
+                    <button class="view-details-btn" onclick="openAppDetail(${app.id})">
+                        Подробнее
+                    </button>
+                `;
+                appsGrid.appendChild(appCard);
+            });
+        }
+
+        // Открытие детальной страницы
+        function openAppDetail(appId) {
+            const app = applications.find(a => a.id === appId);
+            const detail = document.getElementById('appDetail');
+            
+            // Заполняем данные
+            document.getElementById('detailIcon').textContent = app.icon;
+            document.getElementById('detailTitle').textContent = app.name;
+            document.getElementById('detailSubtitle').textContent = app.description;
+            
+            // Заполняем галерею
+            const gallery = document.getElementById('appGallery');
+            gallery.innerHTML = app.images.map(img => 
+                `<div class="gallery-item">
+                    <img src="${img}" alt="${app.name}" onerror="this.style.display='none'; this.parentNode.innerHTML='📱';">
+                </div>`
+            ).join('');
+            
+            // Заполняем функции
+            const features = document.getElementById('appFeatures');
+            features.innerHTML = app.features.map(feature => `
+                <div class="feature-item">
+                    <div class="feature-title">${feature.title}</div>
+                    <div class="feature-desc">${feature.description}</div>
+                </div>
+            `).join('');
+            
+            // Показываем детальную страницу
+            detail.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Закрытие детальной страницы
+        function closeAppDetail() {
+            const detail = document.getElementById('appDetail');
+            detail.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Открытие формы заказа
+        function openOrderForm() {
+            const appName = document.getElementById('detailTitle').textContent;
+            window.location.href = `order.html?app=${encodeURIComponent(appName)}`;
+        }
+
+        // Инициализация
+        window.addEventListener('DOMContentLoaded', loadApplications);
+    </script>
+</body>
+</html>
