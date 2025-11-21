@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Financial Apps</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -809,14 +809,26 @@
     <script>
         // Инициализация Supabase с правильными ключами
         let supabase;
-        try {
-            const supabaseUrl = 'https://egjtgqhuvgfzbuwmzgvd.supabase.co';
-            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVnanRncWh1dmdmemJ1d216Z3ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0MjM3MjAsImV4cCI6MjA2OTk5OTcyMH0.MPb75wP1qXLkFFO5YJ8KK9Qw1qw8J1DD81UvZlWhIXw';
-            supabase = window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
-            console.log('Supabase инициализирован с правильными ключами');
-        } catch (error) {
-            console.error('Ошибка инициализации Supabase:', error);
-            showError('Ошибка подключения к базе данных');
+
+        function initializeSupabase() {
+            try {
+                // Проверяем, загружена ли библиотека Supabase
+                if (typeof supabase === 'undefined' && window.supabase) {
+                    const supabaseUrl = 'https://egjtgqhuvgfzbuwmzgvd.supabase.co';
+                    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVnanRncWh1dmdmemJ1d216Z3ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0MjM3MjAsImV4cCI6MjA2OTk5OTcyMH0.MPb75wP1qXLkFFO5YJ8KK9Qw1qw8J1DD81UvZlWhIXw';
+                    
+                    supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                    console.log('Supabase инициализирован с правильными ключами');
+                    return true;
+                } else {
+                    console.error('Библиотека Supabase не загружена');
+                    return false;
+                }
+            } catch (error) {
+                console.error('Ошибка инициализации Supabase:', error);
+                showError('Ошибка подключения к базе данных');
+                return false;
+            }
         }
 
         // Глобальные переменные
@@ -1082,7 +1094,7 @@
         document.getElementById('orderForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            if (!supabase) {
+            if (!initializeSupabase()) {
                 showOrderError('База данных не доступна. Пожалуйста, обновите страницу.');
                 return;
             }
@@ -1134,7 +1146,18 @@
         }
 
         // Инициализация при загрузке
-        window.addEventListener('DOMContentLoaded', loadApplications);
+        window.addEventListener('DOMContentLoaded', function() {
+            // Пытаемся инициализировать Supabase
+            setTimeout(() => {
+                if (initializeSupabase()) {
+                    console.log('Supabase успешно инициализирован');
+                } else {
+                    console.warn('Supabase не инициализирован, но приложения все равно загружаются');
+                }
+            }, 1000);
+            
+            loadApplications();
+        });
     </script>
 </body>
 </html>
