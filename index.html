@@ -45,43 +45,27 @@
             right: 0;
             z-index: 1000;
             border-bottom: 1px solid rgba(255,255,255,0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .header h1 {
+        .header-title {
             font-size: 28px;
             font-weight: 800;
-            text-align: center;
             background: linear-gradient(45deg, #fff, #e0e0ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .back-btn {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            font-size: 22px;
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-
-        .back-btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: translateY(-50%) scale(1.1);
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
         .support-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
             background: linear-gradient(135deg, #4CAF50, #45a049);
             color: white;
             padding: 10px 16px;
@@ -92,6 +76,88 @@
             align-items: center;
             gap: 8px;
             box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .language-switcher {
+            position: relative;
+        }
+
+        .language-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .language-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 15px;
+            padding: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+            min-width: 150px;
+            z-index: 1001;
+            margin-top: 10px;
+        }
+
+        .language-dropdown.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .language-option {
+            padding: 12px 15px;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.3s ease;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .language-option:hover {
+            background: #f5f5f5;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
         }
 
         .container {
@@ -633,23 +699,91 @@
             transform: scale(1.1);
             box-shadow: 0 15px 30px rgba(0, 136, 204, 0.5);
         }
+
+        /* RTL поддержка для арабского */
+        body[dir="rtl"] {
+            text-align: right;
+        }
+
+        body[dir="rtl"] .header-controls {
+            flex-direction: row-reverse;
+        }
+
+        body[dir="rtl"] .language-dropdown {
+            right: auto;
+            left: 0;
+        }
+
+        body[dir="rtl"] .back-btn {
+            transform: scaleX(-1);
+        }
+
+        body[dir="rtl"] .feature-item {
+            border-left: none;
+            border-right: 5px solid #2196F3;
+        }
+
+        body[dir="rtl"] .feature-item:hover {
+            transform: translateX(-5px);
+        }
+
+        body[dir="rtl"] .info-card {
+            border-left: none;
+            border-right: 5px solid #4CAF50;
+        }
+
+        body[dir="rtl"] .delivery-time,
+        body[dir="rtl"] .payment-info {
+            border-left: none;
+            border-right: 4px solid #2196F3;
+        }
+
+        body[dir="rtl"] .payment-info {
+            border-right-color: #4CAF50;
+        }
     </style>
 </head>
 <body>
     <!-- Экран списка приложений -->
     <div class="screen active" id="appsScreen">
         <div class="header">
-            <h1>🚀 Financial Apps</h1>
-            <div class="support-badge">
-                <span>🛎️</span>
-                Поддержка 24/7
+            <h1 class="header-title" data-i18n="header.title">🚀 Financial Apps</h1>
+            <div class="header-controls">
+                <div class="support-badge">
+                    <span>🛎️</span>
+                    <span data-i18n="header.support">Поддержка 24/7</span>
+                </div>
+                <div class="language-switcher">
+                    <button class="language-btn" id="languageBtn">
+                        <span>🌐</span>
+                        <span id="currentLanguage">RU</span>
+                    </button>
+                    <div class="language-dropdown" id="languageDropdown">
+                        <button class="language-option" data-lang="ru">
+                            <span>🇷🇺</span>
+                            <span>Русский</span>
+                        </button>
+                        <button class="language-option" data-lang="en">
+                            <span>🇺🇸</span>
+                            <span>English</span>
+                        </button>
+                        <button class="language-option" data-lang="fr">
+                            <span>🇫🇷</span>
+                            <span>Français</span>
+                        </button>
+                        <button class="language-option" data-lang="ar">
+                            <span>🇦🇪</span>
+                            <span>العربية</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="container">
             <div class="error-message" id="errorMessage"></div>
             <div class="app-grid" id="appsGrid">
-                <div class="loading">Загрузка приложений...</div>
+                <div class="loading" data-i18n="loading.apps">Загрузка приложений...</div>
             </div>
         </div>
     </div>
@@ -658,7 +792,15 @@
     <div class="screen" id="appDetailScreen">
         <div class="header">
             <button class="back-btn" onclick="showScreen('appsScreen')">←</button>
-            <h1>📱 Детали приложения</h1>
+            <h1 class="header-title" data-i18n="appDetail.title">Детали приложения</h1>
+            <div class="header-controls">
+                <div class="language-switcher">
+                    <button class="language-btn" id="languageBtnDetail">
+                        <span>🌐</span>
+                        <span id="currentLanguageDetail">RU</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="app-detail-content">
@@ -669,14 +811,14 @@
             </div>
 
             <div class="gallery-section">
-                <h2 class="gallery-title">📸 Скриншоты приложения</h2>
+                <h2 class="gallery-title" data-i18n="appDetail.screenshots">📸 Скриншоты приложения</h2>
                 <div class="gallery-scroll" id="appGallery">
                     <!-- Галерея загружается через JS -->
                 </div>
             </div>
 
             <div class="features-section">
-                <h2 class="gallery-title">⭐ Функции</h2>
+                <h2 class="gallery-title" data-i18n="appDetail.features">⭐ Функции</h2>
                 <div class="features-grid" id="appFeatures">
                     <!-- Функции загружаются через JS -->
                 </div>
@@ -684,30 +826,30 @@
 
             <div class="info-section">
                 <div class="info-card">
-                    <div class="info-title">🚀 Срок разработки</div>
-                    <div class="info-text">Мы подготовим ваше приложение за 3-7 дней с полной технической поддержкой</div>
+                    <div class="info-title" data-i18n="info.developmentTime">🚀 Срок разработки</div>
+                    <div class="info-text" data-i18n="info.developmentTimeText">Мы подготовим ваше приложение за 3-7 дней с полной технической поддержкой</div>
                 </div>
                 <div class="info-card">
-                    <div class="info-title">💳 Условия оплаты</div>
+                    <div class="info-title" data-i18n="info.paymentTerms">💳 Условия оплаты</div>
                     <div class="info-text">
-                        • 💰 Оплата после успешного запуска приложения<br>
-                        • 🆓 Бесплатно при наличии команды для продвижения<br>
-                        • 💬 В остальных случаях цена обсуждается с менеджером
+                        <span data-i18n="info.payment1">• 💰 Оплата после успешного запуска приложения</span><br>
+                        <span data-i18n="info.payment2">• 🆓 Бесплатно при наличии команды для продвижения</span><br>
+                        <span data-i18n="info.payment3">• 💬 В остальных случаях цена обсуждается с менеджером</span>
                     </div>
                 </div>
             </div>
 
             <div class="support-section">
                 <div class="support-icon">🛎️</div>
-                <div class="support-title">Поддержка 24/7</div>
-                <p>Есть вопросы? Напишите нам в Telegram</p>
+                <div class="support-title" data-i18n="support.title">Поддержка 24/7</div>
+                <p data-i18n="support.description">Есть вопросы? Напишите нам в Telegram</p>
                 <a href="https://t.me/developer_com1" class="telegram-btn" target="_blank">
                     📨 @developer_com1
                 </a>
             </div>
 
             <div class="order-section">
-                <button class="order-btn" onclick="openOrderForm()">🛒 Заказать приложение</button>
+                <button class="order-btn" onclick="openOrderForm()" data-i18n="appDetail.orderButton">🛒 Заказать приложение</button>
             </div>
         </div>
     </div>
@@ -716,7 +858,15 @@
     <div class="screen" id="orderScreen">
         <div class="header">
             <button class="back-btn" onclick="showScreen('appDetailScreen')">←</button>
-            <h1>🎯 Оформление заказа</h1>
+            <h1 class="header-title" data-i18n="order.title">Оформление заказа</h1>
+            <div class="header-controls">
+                <div class="language-switcher">
+                    <button class="language-btn" id="languageBtnOrder">
+                        <span>🌐</span>
+                        <span id="currentLanguageOrder">RU</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="container">
@@ -727,67 +877,67 @@
                     <div class="app-icon-small" id="orderAppIcon">📱</div>
                     <div class="app-details">
                         <h2 id="orderAppName">Название приложения</h2>
-                        <p>Срок разработки: 3-7 дней</p>
+                        <p data-i18n="order.developmentTime">Срок разработки: 3-7 дней</p>
                     </div>
                 </div>
 
                 <div class="info-card">
-                    <div class="info-title">💳 Условия оплаты</div>
+                    <div class="info-title" data-i18n="info.paymentTerms">💳 Условия оплаты</div>
                     <div class="info-text">
-                        • 💰 Оплата после успешного запуска приложения<br>
-                        • 🆓 Бесплатно при наличии команды для продвижения<br>
-                        • 💬 В остальных случаях цена обсуждается с менеджером
+                        <span data-i18n="info.payment1">• 💰 Оплата после успешного запуска приложения</span><br>
+                        <span data-i18n="info.payment2">• 🆓 Бесплатно при наличии команды для продвижения</span><br>
+                        <span data-i18n="info.payment3">• 💬 В остальных случаях цена обсуждается с менеджером</span>
                     </div>
                 </div>
 
                 <form id="orderForm">
                     <div class="form-group">
-                        <label class="form-label">👤 Ваше имя *</label>
-                        <input type="text" class="form-input" id="clientName" required placeholder="Введите ваше имя">
+                        <label class="form-label" data-i18n="order.form.name">👤 Ваше имя *</label>
+                        <input type="text" class="form-input" id="clientName" required placeholder="" data-i18n-placeholder="order.placeholder.name">
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">📧 Email *</label>
-                        <input type="email" class="form-input" id="clientEmail" required placeholder="your@email.com">
+                        <label class="form-label" data-i18n="order.form.email">📧 Email *</label>
+                        <input type="email" class="form-input" id="clientEmail" required placeholder="" data-i18n-placeholder="order.placeholder.email">
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">📞 Телефон *</label>
-                        <input type="tel" class="form-input" id="clientPhone" required placeholder="+7 (999) 999-99-99">
+                        <label class="form-label" data-i18n="order.form.phone">📞 Телефон *</label>
+                        <input type="tel" class="form-input" id="clientPhone" required placeholder="" data-i18n-placeholder="order.placeholder.phone">
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">👥 Есть ли у вас команда для продвижения? *</label>
+                        <label class="form-label" data-i18n="order.form.team">👥 Есть ли у вас команда для продвижения? *</label>
                         <select class="form-input" id="hasTeam" required>
-                            <option value="">Выберите вариант</option>
-                            <option value="yes">✅ Да, есть команда</option>
-                            <option value="no">❌ Нет, команды нет</option>
-                            <option value="planning">📋 Планирую собрать команду</option>
+                            <option value="" data-i18n="order.form.teamSelect">Выберите вариант</option>
+                            <option value="yes" data-i18n="order.form.teamYes">✅ Да, есть команда</option>
+                            <option value="no" data-i18n="order.form.teamNo">❌ Нет, команды нет</option>
+                            <option value="planning" data-i18n="order.form.teamPlanning">📋 Планирую собрать команду</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">📝 Дополнительные пожелания</label>
-                        <textarea class="form-input form-textarea" id="clientNotes" placeholder="Опишите дополнительные функции или требования..."></textarea>
+                        <label class="form-label" data-i18n="order.form.notes">📝 Дополнительные пожелания</label>
+                        <textarea class="form-input form-textarea" id="clientNotes" placeholder="" data-i18n-placeholder="order.placeholder.notes"></textarea>
                     </div>
 
                     <div class="checkbox-group">
                         <input type="checkbox" id="agreeTerms" required>
-                        <label class="checkbox-label" for="agreeTerms">
+                        <label class="checkbox-label" for="agreeTerms" data-i18n="order.form.agree">
                             ✅ Я согласен с условиями оплаты после запуска и подтверждаю, что предоставленная информация достоверна
                         </label>
                     </div>
 
-                    <button type="submit" class="submit-btn" id="submitBtn">📨 Отправить заявку</button>
+                    <button type="submit" class="submit-btn" id="submitBtn" data-i18n="order.form.submit">📨 Отправить заявку</button>
                 </form>
             </div>
 
             <div class="support-section">
                 <div class="support-title">
                     <span>🛎️</span>
-                    Поддержка 24/7
+                    <span data-i18n="support.title">Поддержка 24/7</span>
                 </div>
-                <p>Есть вопросы по заказу? Напишите нам</p>
+                <p data-i18n="support.orderDescription">Есть вопросы по заказу? Напишите нам</p>
                 <a href="https://t.me/developer_com1" class="telegram-btn" target="_blank">
                     📨 @developer_com1
                 </a>
@@ -795,8 +945,8 @@
 
             <div class="success-message" id="successMessage">
                 <div class="success-icon">✅</div>
-                <h2>Заявка отправлена!</h2>
-                <p>Мы свяжемся с вами в течение 24 часов для уточнения деталей.</p>
+                <h2 data-i18n="order.success.title">Заявка отправлена!</h2>
+                <p data-i18n="order.success.message">Мы свяжемся с вами в течение 24 часов для уточнения деталей.</p>
             </div>
         </div>
     </div>
@@ -812,7 +962,6 @@
 
         function initializeSupabase() {
             try {
-                // Проверяем, загружена ли библиотека Supabase
                 if (typeof supabase === 'undefined' && window.supabase) {
                     const supabaseUrl = 'https://egjtgqhuvgfzbuwmzgvd.supabase.co';
                     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVnanRncWh1dmdmemJ1d216Z3ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0MjM3MjAsImV4cCI6MjA2OTk5OTcyMH0.MPb75wP1qXLkFFO5YJ8KK9Qw1qw8J1DD81UvZlWhIXw';
@@ -831,190 +980,559 @@
             }
         }
 
+        // Система перевода
+        const translations = {
+            ru: {
+                // Общие
+                'header.title': '🚀 Financial Apps',
+                'header.support': 'Поддержка 24/7',
+                'loading.apps': 'Загрузка приложений...',
+                
+                // Детали приложения
+                'appDetail.title': 'Детали приложения',
+                'appDetail.screenshots': '📸 Скриншоты приложения',
+                'appDetail.features': '⭐ Функции',
+                'appDetail.orderButton': '🛒 Заказать приложение',
+                
+                // Информация
+                'info.developmentTime': '🚀 Срок разработки',
+                'info.developmentTimeText': 'Мы подготовим ваше приложение за 3-7 дней с полной технической поддержкой',
+                'info.paymentTerms': '💳 Условия оплаты',
+                'info.payment1': '• 💰 Оплата после успешного запуска приложения',
+                'info.payment2': '• 🆓 Бесплатно при наличии команды для продвижения',
+                'info.payment3': '• 💬 В остальных случаях цена обсуждается с менеджером',
+                
+                // Поддержка
+                'support.title': 'Поддержка 24/7',
+                'support.description': 'Есть вопросы? Напишите нам в Telegram',
+                'support.orderDescription': 'Есть вопросы по заказу? Напишите нам',
+                
+                // Заказ
+                'order.title': 'Оформление заказа',
+                'order.developmentTime': 'Срок разработки: 3-7 дней',
+                'order.success.title': 'Заявка отправлена!',
+                'order.success.message': 'Мы свяжемся с вами в течение 24 часов для уточнения деталей.',
+                
+                // Форма заказа
+                'order.form.name': '👤 Ваше имя *',
+                'order.form.email': '📧 Email *',
+                'order.form.phone': '📞 Телефон *',
+                'order.form.team': '👥 Есть ли у вас команда для продвижения? *',
+                'order.form.notes': '📝 Дополнительные пожелания',
+                'order.form.agree': '✅ Я согласен с условиями оплаты после запуска и подтверждаю, что предоставленная информация достоверна',
+                'order.form.submit': '📨 Отправить заявку',
+                
+                // Плейсхолдеры
+                'order.placeholder.name': 'Введите ваше имя',
+                'order.placeholder.email': 'your@email.com',
+                'order.placeholder.phone': '+7 (999) 999-99-99',
+                'order.placeholder.notes': 'Опишите дополнительные функции или требования...',
+                
+                // Опции выбора
+                'order.form.teamSelect': 'Выберите вариант',
+                'order.form.teamYes': '✅ Да, есть команда',
+                'order.form.teamNo': '❌ Нет, команды нет',
+                'order.form.teamPlanning': '📋 Планирую собрать команду'
+            },
+            en: {
+                // General
+                'header.title': '🚀 Financial Apps',
+                'header.support': '24/7 Support',
+                'loading.apps': 'Loading applications...',
+                
+                // App details
+                'appDetail.title': 'App Details',
+                'appDetail.screenshots': '📸 App Screenshots',
+                'appDetail.features': '⭐ Features',
+                'appDetail.orderButton': '🛒 Order App',
+                
+                // Information
+                'info.developmentTime': '🚀 Development Time',
+                'info.developmentTimeText': 'We will prepare your application in 3-7 days with full technical support',
+                'info.paymentTerms': '💳 Payment Terms',
+                'info.payment1': '• 💰 Payment after successful app launch',
+                'info.payment2': '• 🆓 Free if you have a promotion team',
+                'info.payment3': '• 💬 In other cases, price is discussed with manager',
+                
+                // Support
+                'support.title': '24/7 Support',
+                'support.description': 'Have questions? Contact us on Telegram',
+                'support.orderDescription': 'Have questions about your order? Contact us',
+                
+                // Order
+                'order.title': 'Place Order',
+                'order.developmentTime': 'Development time: 3-7 days',
+                'order.success.title': 'Application Sent!',
+                'order.success.message': 'We will contact you within 24 hours to clarify details.',
+                
+                // Order form
+                'order.form.name': '👤 Your Name *',
+                'order.form.email': '📧 Email *',
+                'order.form.phone': '📞 Phone *',
+                'order.form.team': '👥 Do you have a promotion team? *',
+                'order.form.notes': '📝 Additional wishes',
+                'order.form.agree': '✅ I agree with payment terms after launch and confirm that provided information is accurate',
+                'order.form.submit': '📨 Submit Application',
+                
+                // Placeholders
+                'order.placeholder.name': 'Enter your name',
+                'order.placeholder.email': 'your@email.com',
+                'order.placeholder.phone': '+1 (555) 123-4567',
+                'order.placeholder.notes': 'Describe additional features or requirements...',
+                
+                // Select options
+                'order.form.teamSelect': 'Choose option',
+                'order.form.teamYes': '✅ Yes, I have a team',
+                'order.form.teamNo': '❌ No, I don\'t have a team',
+                'order.form.teamPlanning': '📋 Planning to build a team'
+            },
+            fr: {
+                // Général
+                'header.title': '🚀 Applications Financières',
+                'header.support': 'Support 24/7',
+                'loading.apps': 'Chargement des applications...',
+                
+                // Détails de l'application
+                'appDetail.title': 'Détails de l\'application',
+                'appDetail.screenshots': '📸 Captures d\'écran',
+                'appDetail.features': '⭐ Fonctionnalités',
+                'appDetail.orderButton': '🛒 Commander l\'application',
+                
+                // Information
+                'info.developmentTime': '🚀 Délai de développement',
+                'info.developmentTimeText': 'Nous préparerons votre application en 3-7 jours avec support technique complet',
+                'info.paymentTerms': '💳 Conditions de paiement',
+                'info.payment1': '• 💰 Paiement après le lancement réussi',
+                'info.payment2': '• 🆓 Gratuit si vous avez une équipe de promotion',
+                'info.payment3': '• 💬 Dans d\'autres cas, prix discuté avec le manager',
+                
+                // Support
+                'support.title': 'Support 24/7',
+                'support.description': 'Des questions? Contactez-nous sur Telegram',
+                'support.orderDescription': 'Des questions sur votre commande? Contactez-nous',
+                
+                // Commande
+                'order.title': 'Passer commande',
+                'order.developmentTime': 'Délai de développement: 3-7 jours',
+                'order.success.title': 'Demande envoyée!',
+                'order.success.message': 'Nous vous contacterons dans les 24 heures pour préciser les détails.',
+                
+                // Formulaire de commande
+                'order.form.name': '👤 Votre nom *',
+                'order.form.email': '📧 Email *',
+                'order.form.phone': '📞 Téléphone *',
+                'order.form.team': '👥 Avez-vous une équipe de promotion? *',
+                'order.form.notes': '📝 Souhaits supplémentaires',
+                'order.form.agree': '✅ J\'accepte les conditions de paiement après le lancement et confirme l\'exactitude des informations',
+                'order.form.submit': '📨 Envoyer la demande',
+                
+                // Placeholders
+                'order.placeholder.name': 'Entrez votre nom',
+                'order.placeholder.email': 'votre@email.com',
+                'order.placeholder.phone': '+33 1 23 45 67 89',
+                'order.placeholder.notes': 'Décrivez les fonctionnalités ou exigences supplémentaires...',
+                
+                // Options de sélection
+                'order.form.teamSelect': 'Choisissez une option',
+                'order.form.teamYes': '✅ Oui, j\'ai une équipe',
+                'order.form.teamNo': '❌ Non, je n\'ai pas d\'équipe',
+                'order.form.teamPlanning': '📋 Je prévois de constituer une équipe'
+            },
+            ar: {
+                // عام
+                'header.title': '🚀 التطبيقات المالية',
+                'header.support': 'الدعم على مدار 24/7',
+                'loading.apps': 'جاري تحميل التطبيقات...',
+                
+                // تفاصيل التطبيق
+                'appDetail.title': 'تفاصيل التطبيق',
+                'appDetail.screenshots': '📸 لقطات التطبيق',
+                'appDetail.features': '⭐ الميزات',
+                'appDetail.orderButton': '🛒 طلب التطبيق',
+                
+                // المعلومات
+                'info.developmentTime': '🚀 مدة التطوير',
+                'info.developmentTimeText': 'سنقوم بإعداد تطبيقك خلال 3-7 أيام مع دعم فني كامل',
+                'info.paymentTerms': '💳 شروط الدفع',
+                'info.payment1': '• 💰 الدفع بعد إطلاق التطبيق بنجاح',
+                'info.payment2': '• 🆓 مجاني إذا كان لديك فريق ترويج',
+                'info.payment3': '• 💬 في حالات أخرى، يتم مناقشة السعر مع المدير',
+                
+                // الدعم
+                'support.title': 'الدعم على مدار 24/7',
+                'support.description': 'هل لديك أسئلة؟ اتصل بنا على Telegram',
+                'support.orderDescription': 'هل لديك أسئلة حول طلبك؟ اتصل بنا',
+                
+                // الطلب
+                'order.title': 'تقديم طلب',
+                'order.developmentTime': 'مدة التطوير: 3-7 أيام',
+                'order.success.title': 'تم إرسال الطلب!',
+                'order.success.message': 'سنتصل بك خلال 24 ساعة لتوضيح التفاصيل.',
+                
+                // نموذج الطلب
+                'order.form.name': '👤 اسمك *',
+                'order.form.email': '📧 البريد الإلكتروني *',
+                'order.form.phone': '📞 الهاتف *',
+                'order.form.team': '👥 هل لديك فريق ترويج؟ *',
+                'order.form.notes': '📝 رغبات إضافية',
+                'order.form.agree': '✅ أوافق على شروط الدفع بعد الإطلاق وأؤكد دقة المعلومات المقدمة',
+                'order.form.submit': '📨 إرسال الطلب',
+                
+                // النصوص التوضيحية
+                'order.placeholder.name': 'أدخل اسمك',
+                'order.placeholder.email': 'your@email.com',
+                'order.placeholder.phone': '+966 55 123 4567',
+                'order.placeholder.notes': 'صف الميزات أو المتطلبات الإضافية...',
+                
+                // خيارات التحديد
+                'order.form.teamSelect': 'اختر خيارًا',
+                'order.form.teamYes': '✅ نعم، لدي فريق',
+                'order.form.teamNo': '❌ لا، ليس لدي فريق',
+                'order.form.teamPlanning': '📋 أخطط لتشكيل فريق'
+            }
+        };
+
+        const appTranslations = {
+            ru: [
+                {
+                    id: 1,
+                    name: "Торговый терминал",
+                    description: "Профессиональная платформа для торговли",
+                    features: [
+                        { title: "Графики в реальном времени", description: "Мгновенное обновление цен и графиков" },
+                        { title: "Разные типы ордеров", description: "Лимитные, рыночные и отложенные ордера" },
+                        { title: "Технический анализ", description: "Более 50 индикаторов и инструментов" },
+                        { title: "Безопасность", description: "Двухфакторная аутентификация и шифрование" }
+                    ]
+                },
+                {
+                    id: 2,
+                    name: "Стейкинг платформа",
+                    description: "Пассивный заработок на стейкинге",
+                    features: [
+                        { title: "Автоматические выплаты", description: "Ежедневное начисление процентов" },
+                        { title: "Гибкие сроки", description: "От 7 дней до 12 месяцев" },
+                        { title: "Мониторинг", description: "Отслеживание доходности в реальном времени" }
+                    ]
+                },
+                {
+                    id: 3,
+                    name: "Крипто-майнинг",
+                    description: "Облачный майнинг с выплатами",
+                    features: [
+                        { title: "Аренда мощности", description: "Мощности от 1 TH/s до 1000 TH/s" },
+                        { title: "Авто-оптимизация", description: "Автоматический подбор алгоритмов" },
+                        { title: "Статистика", description: "Детальная статистика майнинга" }
+                    ]
+                },
+                {
+                    id: 4,
+                    name: "DeFi агрегатор",
+                    description: "Все DeFi протоколы в одном месте",
+                    features: [
+                        { title: "Сравнение доходности", description: "Автоматический поиск лучших ставок" },
+                        { title: "Ребалансировка", description: "Автоматическая оптимизация портфеля" },
+                        { title: "Анализ рисков", description: "Оценка рисков по каждому протоколу" }
+                    ]
+                },
+                {
+                    id: 5,
+                    name: "Партнерская система",
+                    description: "Многоуровневая реферальная программа",
+                    features: [
+                        { title: "MLM структура", description: "До 10 уровней рефералов" },
+                        { title: "Автовыплаты", description: "Автоматические выплаты комиссий" },
+                        { title: "Аналитика", description: "Детальная статистика привлечения" }
+                    ]
+                },
+                {
+                    id: 6,
+                    name: "Мобильный кошелек",
+                    description: "Безопасный кошелек с USDT",
+                    features: [
+                        { title: "Мульти-валютность", description: "Поддержка 50+ криптовалют" },
+                        { title: "Биометрия", description: "Face ID и Touch ID защита" },
+                        { title: "Быстрые транзакции", description: "Мгновенные переводы" }
+                    ]
+                }
+            ],
+            en: [
+                {
+                    id: 1,
+                    name: "Trading Terminal",
+                    description: "Professional trading platform",
+                    features: [
+                        { title: "Real-time charts", description: "Instant price and chart updates" },
+                        { title: "Various order types", description: "Limit, market and pending orders" },
+                        { title: "Technical analysis", description: "Over 50 indicators and tools" },
+                        { title: "Security", description: "Two-factor authentication and encryption" }
+                    ]
+                },
+                {
+                    id: 2,
+                    name: "Staking Platform",
+                    description: "Passive income through staking",
+                    features: [
+                        { title: "Automatic payouts", description: "Daily interest accrual" },
+                        { title: "Flexible terms", description: "From 7 days to 12 months" },
+                        { title: "Monitoring", description: "Real-time profitability tracking" }
+                    ]
+                },
+                {
+                    id: 3,
+                    name: "Crypto Mining",
+                    description: "Cloud mining with payouts",
+                    features: [
+                        { title: "Power rental", description: "From 1 TH/s to 1000 TH/s" },
+                        { title: "Auto-optimization", description: "Automatic algorithm selection" },
+                        { title: "Statistics", description: "Detailed mining statistics" }
+                    ]
+                },
+                {
+                    id: 4,
+                    name: "DeFi Aggregator",
+                    description: "All DeFi protocols in one place",
+                    features: [
+                        { title: "Yield comparison", description: "Automatic search for best rates" },
+                        { title: "Rebalancing", description: "Automatic portfolio optimization" },
+                        { title: "Risk analysis", description: "Risk assessment for each protocol" }
+                    ]
+                },
+                {
+                    id: 5,
+                    name: "Affiliate System",
+                    description: "Multi-level referral program",
+                    features: [
+                        { title: "MLM structure", description: "Up to 10 referral levels" },
+                        { title: "Auto-payouts", description: "Automatic commission payments" },
+                        { title: "Analytics", description: "Detailed attraction statistics" }
+                    ]
+                },
+                {
+                    id: 6,
+                    name: "Mobile Wallet",
+                    description: "Secure wallet with USDT",
+                    features: [
+                        { title: "Multi-currency", description: "Support for 50+ cryptocurrencies" },
+                        { title: "Biometrics", description: "Face ID and Touch ID protection" },
+                        { title: "Fast transactions", description: "Instant transfers" }
+                    ]
+                }
+            ],
+            fr: [
+                {
+                    id: 1,
+                    name: "Terminal de Trading",
+                    description: "Plateforme de trading professionnelle",
+                    features: [
+                        { title: "Graphiques en temps réel", description: "Mises à jour instantanées des prix et graphiques" },
+                        { title: "Types d'ordres variés", description: "Ordres limite, marché et en attente" },
+                        { title: "Analyse technique", description: "Plus de 50 indicateurs et outils" },
+                        { title: "Sécurité", description: "Authentification à deux facteurs et chiffrement" }
+                    ]
+                },
+                {
+                    id: 2,
+                    name: "Plateforme de Staking",
+                    description: "Revenu passif grâce au staking",
+                    features: [
+                        { title: "Paiements automatiques", description: "Calcul quotidien des intérêts" },
+                        { title: "Conditions flexibles", description: "De 7 jours à 12 mois" },
+                        { title: "Surveillance", description: "Suivi de la rentabilité en temps réel" }
+                    ]
+                },
+                {
+                    id: 3,
+                    name: "Mining Crypto",
+                    description: "Mining cloud avec paiements",
+                    features: [
+                        { title: "Location de puissance", description: "De 1 TH/s à 1000 TH/s" },
+                        { title: "Auto-optimisation", description: "Sélection automatique d'algorithmes" },
+                        { title: "Statistiques", description: "Statistiques détaillées du mining" }
+                    ]
+                },
+                {
+                    id: 4,
+                    name: "Agrégateur DeFi",
+                    description: "Tous les protocoles DeFi au même endroit",
+                    features: [
+                        { title: "Comparaison des rendements", description: "Recherche automatique des meilleurs taux" },
+                        { title: "Rééquilibrage", description: "Optimisation automatique du portefeuille" },
+                        { title: "Analyse des risques", description: "Évaluation des risques pour chaque protocole" }
+                    ]
+                },
+                {
+                    id: 5,
+                    name: "Système d'Affiliation",
+                    description: "Programme de parrainage multi-niveaux",
+                    features: [
+                        { title: "Structure MLM", description: "Jusqu'à 10 niveaux de parrainage" },
+                        { title: "Paiements automatiques", description: "Paiements automatiques des commissions" },
+                        { title: "Analytique", description: "Statistiques détaillées d'attraction" }
+                    ]
+                },
+                {
+                    id: 6,
+                    name: "Portefeuille Mobile",
+                    description: "Portefeuille sécurisé avec USDT",
+                    features: [
+                        { title: "Multi-devises", description: "Support de 50+ cryptomonnaies" },
+                        { title: "Biométrie", description: "Protection Face ID et Touch ID" },
+                        { title: "Transactions rapides", description: "Transferts instantanés" }
+                    ]
+                }
+            ],
+            ar: [
+                {
+                    id: 1,
+                    name: "منصة التداول",
+                    description: "منصة تداول احترافية",
+                    features: [
+                        { title: "الرسوم البيانية في الوقت الحقيقي", description: "تحديثات فورية للأسعار والرسوم البيانية" },
+                        { title: "أنواع أوامر متنوعة", description: "أوامر محددة وأوامر السوق وأوامر معلقة" },
+                        { title: "التحليل الفني", description: "أكثر من 50 مؤشر وأداة" },
+                        { title: "الأمان", description: "المصادقة الثنائية والتشفير" }
+                    ]
+                },
+                {
+                    id: 2,
+                    name: "منصة Staking",
+                    description: "دخل سلبي من خلال Staking",
+                    features: [
+                        { title: "مدفوعات تلقائية", description: "استحقاق الفائدة اليومي" },
+                        { title: "شروط مرنة", description: "من 7 أيام إلى 12 شهرًا" },
+                        { title: "المراقبة", description: "تتبع الربحية في الوقت الحقيقي" }
+                    ]
+                },
+                {
+                    id: 3,
+                    name: "تعدين العملات",
+                    description: "تعدين سحابي مع مدفوعات",
+                    features: [
+                        { title: "تأجير الطاقة", description: "من 1 TH/s إلى 1000 TH/s" },
+                        { title: "التحسين التلقائي", description: "اختيار خوارزمية تلقائي" },
+                        { title: "الإحصائيات", description: "إحصائيات تفصيلية للتعدين" }
+                    ]
+                },
+                {
+                    id: 4,
+                    name: "مجمع DeFi",
+                    description: "جميع بروتوكولات DeFi في مكان واحد",
+                    features: [
+                        { title: "مقارنة العائد", description: "بحث تلقائي عن أفضل الأسعار" },
+                        { title: "إعادة التوازن", description: "تحسين محفظة تلقائي" },
+                        { title: "تحليل المخاطر", description: "تقييم المخاطر لكل بروتوكول" }
+                    ]
+                },
+                {
+                    id: 5,
+                    name: "نظام الإحالة",
+                    description: "برنامج إحالة متعدد المستويات",
+                    features: [
+                        { title: "هيكل MLM", description: "حتى 10 مستويات إحالة" },
+                        { title: "مدفوعات تلقائية", description: "مدفوعات عمولة تلقائية" },
+                        { title: "التحليلات", description: "إحصائيات تفصيلية للجذب" }
+                    ]
+                },
+                {
+                    id: 6,
+                    name: "محفظة الجوال",
+                    description: "محفظة آمنة مع USDT",
+                    features: [
+                        { title: "متعددة العملات", description: "دعم 50+ عملة مشفرة" },
+                        { title: "البيومترية", description: "حماية Face ID و Touch ID" },
+                        { title: "معاملات سريعة", description: "تحويلات فورية" }
+                    ]
+                }
+            ]
+        };
+
         // Глобальные переменные
         let currentApp = null;
-        const applications = [
-            {
-                id: 1,
-                name: "Торговый терминал",
-                icon: "📊",
-                description: "Профессиональная платформа для торговли",
-                images: [
-                    "assets/trading_1.jpg",
-                    "assets/trading_2.jpg", 
-                    "assets/trading_3.jpg",
-                    "assets/trading_4.jpg",
-                    "assets/trading_5.jpg"
-                ],
-                features: [
-                    {
-                        title: "Real-time графики",
-                        description: "Мгновенное обновление цен и графиков"
-                    },
-                    {
-                        title: "Разные ордера",
-                        description: "Лимитные, рыночные и отложенные ордера"
-                    },
-                    {
-                        title: "Технический анализ",
-                        description: "Более 50 индикаторов и инструментов"
-                    },
-                    {
-                        title: "Безопасность",
-                        description: "Двухфакторная аутентификация и шифрование"
-                    }
-                ]
-            },
-            {
-                id: 2,
-                name: "Стейкинг платформа",
-                icon: "🏦",
-                description: "Пассивный заработок на стейкинге",
-                images: [
-                    "assets/staking_1.jpg",
-                    "assets/staking_2.jpg",
-                    "assets/staking_3.jpg",
-                    "assets/staking_4.jpg"
-                ],
-                features: [
-                    {
-                        title: "Автоматические выплаты",
-                        description: "Ежедневное начисление процентов"
-                    },
-                    {
-                        title: "Гибкие сроки",
-                        description: "От 7 дней до 12 месяцев"
-                    },
-                    {
-                        title: "Мониторинг",
-                        description: "Отслеживание доходности в реальном времени"
-                    }
-                ]
-            },
-            {
-                id: 3,
-                name: "Крипто-майнинг",
-                icon: "⛏️",
-                description: "Облачный майнинг с выплатами",
-                images: [
-                    "assets/mining_1.jpg",
-                    "assets/mining_2.jpg",
-                    "assets/mining_3.jpg",
-                    "assets/mining_4.jpg",
-                    "assets/mining_5.jpg",
-                    "assets/mining_6.jpg"
-                ],
-                features: [
-                    {
-                        title: "Аренда мощности",
-                        description: "Мощности от 1 TH/s до 1000 TH/s"
-                    },
-                    {
-                        title: "Авто-оптимизация",
-                        description: "Автоматический подбор алгоритмов"
-                    },
-                    {
-                        title: "Статистика",
-                        description: "Детальная статистика майнинга"
-                    }
-                ]
-            },
-            {
-                id: 4,
-                name: "DeFi агрегатор",
-                icon: "🔄",
-                description: "Все DeFi протоколы в одном месте",
-                images: [
-                    "assets/defi_1.jpg",
-                    "assets/defi_2.jpg",
-                    "assets/defi_3.jpg"
-                ],
-                features: [
-                    {
-                        title: "Сравнение доходности",
-                        description: "Автоматический поиск лучших ставок"
-                    },
-                    {
-                        title: "Ребалансировка",
-                        description: "Автоматическая оптимизация портфеля"
-                    },
-                    {
-                        title: "Анализ рисков",
-                        description: "Оценка рисков по каждому протоколу"
-                    }
-                ]
-            },
-            {
-                id: 5,
-                name: "Партнерская система",
-                icon: "👥",
-                description: "Многоуровневая реферальная программа",
-                images: [
-                    "assets/affiliate_1.jpg",
-                    "assets/affiliate_2.jpg",
-                    "assets/affiliate_3.jpg",
-                    "assets/affiliate_4.jpg"
-                ],
-                features: [
-                    {
-                        title: "MLM структура",
-                        description: "До 10 уровней рефералов"
-                    },
-                    {
-                        title: "Автовыплаты",
-                        description: "Автоматические выплаты комиссий"
-                    },
-                    {
-                        title: "Аналитика",
-                        description: "Детальная статистика привлечения"
-                    }
-                ]
-            },
-            {
-                id: 6,
-                name: "Мобильный кошелек",
-                icon: "💰",
-                description: "Безопасный кошелек с USDT",
-                images: [
-                    "assets/wallet_1.jpg",
-                    "assets/wallet_2.jpg",
-                    "assets/wallet_3.jpg",
-                    "assets/wallet_4.jpg",
-                    "assets/wallet_5.jpg"
-                ],
-                features: [
-                    {
-                        title: "Мульти-валютность",
-                        description: "Поддержка 50+ криптовалют"
-                    },
-                    {
-                        title: "Биометрия",
-                        description: "Face ID и Touch ID защита"
-                    },
-                    {
-                        title: "Быстрые транзакции",
-                        description: "Мгновенные переводы"
-                    }
-                ]
-            }
+        let currentLanguage = 'ru';
+        let applications = [];
+
+        const appIcons = ["📊", "🏦", "⛏️", "🔄", "👥", "💰"];
+        const appImages = [
+            ["assets/trading_1.jpg", "assets/trading_2.jpg", "assets/trading_3.jpg", "assets/trading_4.jpg", "assets/trading_5.jpg"],
+            ["assets/staking_1.jpg", "assets/staking_2.jpg", "assets/staking_3.jpg", "assets/staking_4.jpg"],
+            ["assets/mining_1.jpg", "assets/mining_2.jpg", "assets/mining_3.jpg", "assets/mining_4.jpg", "assets/mining_5.jpg", "assets/mining_6.jpg"],
+            ["assets/defi_1.jpg", "assets/defi_2.jpg", "assets/defi_3.jpg"],
+            ["assets/affiliate_1.jpg", "assets/affiliate_2.jpg", "assets/affiliate_3.jpg", "assets/affiliate_4.jpg"],
+            ["assets/wallet_1.jpg", "assets/wallet_2.jpg", "assets/wallet_3.jpg", "assets/wallet_4.jpg", "assets/wallet_5.jpg"]
         ];
 
-        // Функции управления экранами
-        function showScreen(screenId) {
-            // Скрыть все экраны
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.classList.remove('active');
+        // Функции управления языком
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('language', lang);
+            
+            // Обновляем язык в интерфейсе
+            document.querySelectorAll('#currentLanguage, #currentLanguageDetail, #currentLanguageOrder').forEach(el => {
+                el.textContent = lang.toUpperCase();
             });
             
-            // Показать выбранный экран
-            document.getElementById(screenId).classList.add('active');
+            // Устанавливаем направление текста для арабского
+            if (lang === 'ar') {
+                document.body.setAttribute('dir', 'rtl');
+            } else {
+                document.body.removeAttribute('dir');
+            }
             
-            // Прокрутить вверх
-            window.scrollTo(0, 0);
+            // Обновляем переводы
+            updateTranslations();
+            
+            // Обновляем приложения
+            applications = appTranslations[lang].map((app, index) => ({
+                ...app,
+                icon: appIcons[index],
+                images: appImages[index]
+            }));
+            
+            // Перезагружаем контент
+            if (document.getElementById('appsScreen').classList.contains('active')) {
+                loadApplications();
+            } else if (currentApp) {
+                // Обновляем текущее приложение
+                const appId = currentApp.id;
+                currentApp = applications.find(app => app.id === appId);
+                if (currentApp) {
+                    updateAppDetail();
+                }
+            }
         }
 
-        function openAppDetail(appId) {
-            currentApp = applications.find(a => a.id === appId);
+        function updateTranslations() {
+            // Обновляем тексты с data-i18n
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                    element.textContent = translations[currentLanguage][key];
+                }
+            });
+            
+            // Обновляем плейсхолдеры
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-i18n-placeholder');
+                if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                    element.setAttribute('placeholder', translations[currentLanguage][key]);
+                }
+            });
+            
+            // Обновляем опции select
+            const teamSelect = document.getElementById('hasTeam');
+            if (teamSelect) {
+                Array.from(teamSelect.options).forEach(option => {
+                    const key = option.getAttribute('data-i18n');
+                    if (key && translations[currentLanguage] && translations[currentLanguage][key]) {
+                        option.textContent = translations[currentLanguage][key];
+                    }
+                });
+            }
+        }
+
+        function updateAppDetail() {
+            if (!currentApp) return;
             
             document.getElementById('detailIcon').textContent = currentApp.icon;
             document.getElementById('detailTitle').textContent = currentApp.name;
@@ -1034,7 +1552,25 @@
                     <div class="feature-desc">${feature.description}</div>
                 </div>
             `).join('');
+        }
+
+        // Функции управления экранами
+        function showScreen(screenId) {
+            // Скрыть все экраны
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
             
+            // Показать выбранный экран
+            document.getElementById(screenId).classList.add('active');
+            
+            // Прокрутить вверх
+            window.scrollTo(0, 0);
+        }
+
+        function openAppDetail(appId) {
+            currentApp = applications.find(a => a.id === appId);
+            updateAppDetail();
             showScreen('appDetailScreen');
         }
 
@@ -1063,7 +1599,7 @@
             const appsGrid = document.getElementById('appsGrid');
             appsGrid.innerHTML = '';
             
-            applications.forEach(app => {
+            applications.forEach((app, index) => {
                 const appCard = document.createElement('div');
                 appCard.className = 'app-card';
                 appCard.innerHTML = `
@@ -1080,10 +1616,19 @@
                         ).join('')}
                     </div>
                     
-                    <div class="delivery-time">⏱️ Срок разработки: 3-7 дней</div>
-                    <div class="payment-info">💳 Оплата после запуска</div>
+                    <div class="delivery-time">⏱️ ${currentLanguage === 'ru' ? 'Срок разработки: 3-7 дней' : 
+                                               currentLanguage === 'en' ? 'Development time: 3-7 days' :
+                                               currentLanguage === 'fr' ? 'Délai de développement: 3-7 jours' :
+                                               'مدة التطوير: 3-7 أيام'}</div>
+                    <div class="payment-info">💳 ${currentLanguage === 'ru' ? 'Оплата после запуска' :
+                                              currentLanguage === 'en' ? 'Payment after launch' :
+                                              currentLanguage === 'fr' ? 'Paiement après lancement' :
+                                              'الدفع بعد الإطلاق'}</div>
                     <button class="view-details-btn" onclick="openAppDetail(${app.id})">
-                        📖 Подробнее
+                        ${currentLanguage === 'ru' ? '📖 Подробнее' :
+                          currentLanguage === 'en' ? '📖 Details' :
+                          currentLanguage === 'fr' ? '📖 Détails' :
+                          '📖 التفاصيل'}
                     </button>
                 `;
                 appsGrid.appendChild(appCard);
@@ -1095,13 +1640,19 @@
             e.preventDefault();
             
             if (!initializeSupabase()) {
-                showOrderError('База данных не доступна. Пожалуйста, обновите страницу.');
+                showOrderError(currentLanguage === 'ru' ? 'База данных не доступна. Пожалуйста, обновите страницу.' :
+                              currentLanguage === 'en' ? 'Database not available. Please refresh the page.' :
+                              currentLanguage === 'fr' ? 'Base de données non disponible. Veuillez actualiser la page.' :
+                              'قاعدة البيانات غير متاحة. يرجى تحديث الصفحة.');
                 return;
             }
 
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Отправка...';
+            submitBtn.textContent = currentLanguage === 'ru' ? 'Отправка...' :
+                                   currentLanguage === 'en' ? 'Sending...' :
+                                   currentLanguage === 'fr' ? 'Envoi...' :
+                                   'جاري الإرسال...';
 
             const order = {
                 app_name: currentApp.name,
@@ -1133,9 +1684,12 @@
 
             } catch (error) {
                 console.error('Error saving order:', error);
-                showOrderError('Ошибка при отправке заявки. Пожалуйста, попробуйте еще раз или свяжитесь с поддержкой.');
+                showOrderError(currentLanguage === 'ru' ? 'Ошибка при отправке заявки. Пожалуйста, попробуйте еще раз или свяжитесь с поддержкой.' :
+                              currentLanguage === 'en' ? 'Error sending application. Please try again or contact support.' :
+                              currentLanguage === 'fr' ? 'Erreur lors de l\'envoi de la demande. Veuillez réessayer ou contacter le support.' :
+                              'خطأ في إرسال الطلب. يرجى المحاولة مرة أخرى أو الاتصال بالدعم.');
                 submitBtn.disabled = false;
-                submitBtn.textContent = '📨 Отправить заявку';
+                submitBtn.textContent = translations[currentLanguage]['order.form.submit'];
             }
         });
 
@@ -1147,16 +1701,50 @@
 
         // Инициализация при загрузке
         window.addEventListener('DOMContentLoaded', function() {
-            // Пытаемся инициализировать Supabase
+            // Устанавливаем язык из localStorage или по умолчанию
+            const savedLanguage = localStorage.getItem('language') || 'ru';
+            setLanguage(savedLanguage);
+            
+            // Инициализируем Supabase
             setTimeout(() => {
-                if (initializeSupabase()) {
-                    console.log('Supabase успешно инициализирован');
-                } else {
-                    console.warn('Supabase не инициализирован, но приложения все равно загружаются');
-                }
+                initializeSupabase();
             }, 1000);
             
+            // Загружаем приложения
             loadApplications();
+            
+            // Настраиваем переключатель языка
+            const languageBtn = document.getElementById('languageBtn');
+            const languageDropdown = document.getElementById('languageDropdown');
+            
+            languageBtn.addEventListener('click', function() {
+                languageDropdown.classList.toggle('active');
+            });
+            
+            // Закрываем dropdown при клике вне его
+            document.addEventListener('click', function(event) {
+                if (!languageBtn.contains(event.target) && !languageDropdown.contains(event.target)) {
+                    languageDropdown.classList.remove('active');
+                }
+            });
+            
+            // Обработчики для выбора языка
+            document.querySelectorAll('.language-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    setLanguage(lang);
+                    languageDropdown.classList.remove('active');
+                });
+            });
+            
+            // Синхронизация переключателей на всех экранах
+            document.querySelectorAll('.language-btn').forEach(btn => {
+                if (btn.id !== 'languageBtn') {
+                    btn.addEventListener('click', function() {
+                        document.getElementById('languageDropdown').classList.toggle('active');
+                    });
+                }
+            });
         });
     </script>
 </body>
