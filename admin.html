@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Админ-панель</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -187,7 +187,7 @@
 
         .order-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: start;
             margin-bottom: 12px;
         }
@@ -311,8 +311,10 @@
         <div class="login-form">
             <div class="login-title">👨‍💼 Админ-панель</div>
             <div class="login-subtitle">Введите пароль для доступа</div>
-            <input type="password" class="login-input" id="adminPassword" placeholder="Пароль" required>
-            <button class="login-btn" onclick="checkAdminPassword()">Войти</button>
+            <form onsubmit="checkAdminPassword(); return false;">
+                <input type="password" class="login-input" id="adminPassword" placeholder="Пароль" required>
+                <button type="submit" class="login-btn">Войти</button>
+            </form>
         </div>
     </div>
 
@@ -374,6 +376,9 @@
     </div>
 
     <script>
+        // Глобальная переменная для Supabase
+        let supabase;
+
         // Проверка авторизации при загрузке
         if (localStorage.getItem('adminAuthenticated') !== 'true') {
             document.getElementById('loginScreen').style.display = 'flex';
@@ -386,6 +391,7 @@
 
         function checkAdminPassword() {
             const password = document.getElementById('adminPassword').value;
+            // Пароль: admin123
             if (password === 'admin123') {
                 localStorage.setItem('adminAuthenticated', 'true');
                 document.getElementById('loginScreen').style.display = 'none';
@@ -394,6 +400,7 @@
             } else {
                 alert('Неверный пароль!');
             }
+            return false;
         }
 
         function logout() {
@@ -403,15 +410,20 @@
 
         function initializeAdmin() {
             // Инициализация Supabase для админки
-            let supabase;
             try {
                 const supabaseUrl = 'https://egjtgqhuvgfzbuwmzgvd.supabase.co';
                 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVnanRncWh1dmdmemJ1d216Z3ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0MjM3MjAsImV4cCI6MjA2OTk5OTcyMH0.MPb75wP1qXLkFFO5YJ8KK9Qw1qw8J1DD81UvZlWhIXw';
-                supabase = window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
-                console.log('Supabase инициализирован в admin.html');
+                
+                if (window.supabase) {
+                    supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                    console.log('Supabase инициализирован в admin.html');
+                } else {
+                    throw new Error('Библиотека Supabase не загружена');
+                }
             } catch (error) {
                 console.error('Ошибка инициализации Supabase:', error);
-                showError('Ошибка подключения к базе данных');
+                showError('Ошибка подключения к базе данных: ' + error.message);
+                return;
             }
 
             window.supabase = supabase;
