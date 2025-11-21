@@ -1,6 +1,6 @@
 name = "financial-apps-generator"
 compatibility_date = "2025-11-21"
-main = "src/index.js"
+main = "src/index.html"
 
 [site]
 bucket = "./"
