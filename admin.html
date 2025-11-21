@@ -19,6 +19,67 @@
             min-height: 100vh;
         }
 
+        .login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .login-form {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .login-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+
+        .login-input:focus {
+            border-color: #2196F3;
+            outline: none;
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .admin-content {
+            display: none;
+        }
+
         .header {
             background: white;
             padding: 60px 20px 20px 20px;
@@ -38,6 +99,19 @@
             border: none;
             font-size: 20px;
             cursor: pointer;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
         }
 
         .header h1 {
@@ -233,66 +307,130 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <button class="back-btn" onclick="window.location.href='index.html'">←</button>
-        <h1>👨‍💼 Панель администратора</h1>
+    <div class="login-screen" id="loginScreen">
+        <div class="login-form">
+            <div class="login-title">👨‍💼 Админ-панель</div>
+            <div class="login-subtitle">Введите пароль для доступа</div>
+            <input type="password" class="login-input" id="adminPassword" placeholder="Пароль" required>
+            <button class="login-btn" onclick="checkAdminPassword()">Войти</button>
+        </div>
     </div>
 
-    <div class="container">
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div>Всего</div>
-                <div class="stat-number" id="totalOrders">0</div>
-            </div>
-            <div class="stat-card">
-                <div>Новые</div>
-                <div class="stat-number new" id="newOrders">0</div>
-            </div>
-            <div class="stat-card">
-                <div>В работе</div>
-                <div class="stat-number processing" id="processingOrders">0</div>
-            </div>
-            <div class="stat-card">
-                <div>Завершено</div>
-                <div class="stat-number completed" id="completedOrders">0</div>
-            </div>
+    <div class="admin-content" id="adminContent">
+        <div class="header">
+            <button class="back-btn" onclick="window.location.href='index.html'">←</button>
+            <button class="logout-btn" onclick="logout()">Выйти</button>
+            <h1>👨‍💼 Панель администратора</h1>
         </div>
 
-        <div class="filters">
-            <div class="filter-row">
-                <select class="filter-select" id="statusFilter">
-                    <option value="all">Все статусы</option>
-                    <option value="new">Новые</option>
-                    <option value="processing">В работе</option>
-                    <option value="completed">Завершено</option>
-                    <option value="cancelled">Отменено</option>
-                </select>
-                <select class="filter-select" id="appFilter">
-                    <option value="all">Все приложения</option>
-                </select>
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div>Всего</div>
+                    <div class="stat-number" id="totalOrders">0</div>
+                </div>
+                <div class="stat-card">
+                    <div>Новые</div>
+                    <div class="stat-number new" id="newOrders">0</div>
+                </div>
+                <div class="stat-card">
+                    <div>В работе</div>
+                    <div class="stat-number processing" id="processingOrders">0</div>
+                </div>
+                <div class="stat-card">
+                    <div>Завершено</div>
+                    <div class="stat-number completed" id="completedOrders">0</div>
+                </div>
             </div>
-            <button class="action-btn btn-process" onclick="loadOrders()" style="width: 100%">
-                Применить фильтры
-            </button>
-        </div>
 
-        <div id="errorMessage" class="error" style="display: none;"></div>
+            <div class="filters">
+                <div class="filter-row">
+                    <select class="filter-select" id="statusFilter">
+                        <option value="all">Все статусы</option>
+                        <option value="new">Новые</option>
+                        <option value="processing">В работе</option>
+                        <option value="completed">Завершено</option>
+                        <option value="cancelled">Отменено</option>
+                    </select>
+                    <select class="filter-select" id="appFilter">
+                        <option value="all">Все приложения</option>
+                    </select>
+                </div>
+                <button class="action-btn btn-process" onclick="loadOrders()" style="width: 100%">
+                    Применить фильтры
+                </button>
+            </div>
 
-        <div class="orders-list" id="ordersList">
-            <div class="loading">Загрузка заказов...</div>
-        </div>
+            <div id="errorMessage" class="error" style="display: none;"></div>
 
-        <div class="support-info">
-            <p>📞 Поддержка клиентов: <a href="https://t.me/developer_com1" class="telegram-link" target="_blank">@developer_com1</a></p>
+            <div class="orders-list" id="ordersList">
+                <div class="loading">Загрузка заказов...</div>
+            </div>
+
+            <div class="support-info">
+                <p>📞 Поддержка клиентов: <a href="https://t.me/developer_com1" class="telegram-link" target="_blank">@developer_com1</a></p>
+            </div>
         </div>
     </div>
 
     <script>
-        const supabaseUrl = 'https://egjtgqhuvgfzbuwmzgvd.supabase.co';
-        const supabaseKey = 'sb_publishable_63fSlgFk4VRjgJ340gp3Ag_2Xh8_OX4';
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        // Проверка авторизации при загрузке
+        if (localStorage.getItem('adminAuthenticated') !== 'true') {
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('adminContent').style.display = 'none';
+        } else {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('adminContent').style.display = 'block';
+            initializeAdmin();
+        }
+
+        function checkAdminPassword() {
+            const password = document.getElementById('adminPassword').value;
+            if (password === 'admin123') {
+                localStorage.setItem('adminAuthenticated', 'true');
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminContent').style.display = 'block';
+                initializeAdmin();
+            } else {
+                alert('Неверный пароль!');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('adminAuthenticated');
+            window.location.reload();
+        }
+
+        function initializeAdmin() {
+            // Инициализация Supabase для админки
+            let supabase;
+            try {
+                const supabaseUrl = 'https://egjtgqhuvgfzbuwmzgvd.supabase.co';
+                const supabaseKey = 'sb_publishable_63fSlgFk4VRjgJ340gp3Ag_2Xh8_OX4';
+                supabase = window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
+                console.log('Supabase инициализирован в admin.html');
+            } catch (error) {
+                console.error('Ошибка инициализации Supabase:', error);
+                showError('Ошибка подключения к базе данных');
+            }
+
+            window.supabase = supabase;
+            loadAppFilters();
+            loadOrders();
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
 
         async function loadOrders() {
+            if (!window.supabase) {
+                showError('База данных не доступна');
+                return;
+            }
+
             const ordersList = document.getElementById('ordersList');
             const statusFilter = document.getElementById('statusFilter').value;
             const appFilter = document.getElementById('appFilter').value;
@@ -300,7 +438,7 @@
             ordersList.innerHTML = '<div class="loading">Загрузка заказов...</div>';
             
             try {
-                let query = supabase
+                let query = window.supabase
                     .from('orders')
                     .select('*')
                     .order('created_at', { ascending: false });
@@ -425,8 +563,13 @@
         }
 
         async function changeStatus(orderId, newStatus) {
+            if (!window.supabase) {
+                showError('База данных не доступна');
+                return;
+            }
+
             try {
-                const { error } = await supabase
+                const { error } = await window.supabase
                     .from('orders')
                     .update({ status: newStatus })
                     .eq('id', orderId);
@@ -444,8 +587,13 @@
 
         async function deleteOrder(orderId) {
             if (confirm('Удалить этот заказ?')) {
+                if (!window.supabase) {
+                    showError('База данных не доступна');
+                    return;
+                }
+
                 try {
-                    const { error } = await supabase
+                    const { error } = await window.supabase
                         .from('orders')
                         .delete()
                         .eq('id', orderId);
@@ -475,12 +623,12 @@
             });
         }
 
-        setInterval(loadOrders, 30000);
-
-        window.addEventListener('DOMContentLoaded', function() {
-            loadAppFilters();
-            loadOrders();
-        });
+        // Авто-обновление каждые 30 секунд
+        setInterval(() => {
+            if (localStorage.getItem('adminAuthenticated') === 'true') {
+                loadOrders();
+            }
+        }, 30000);
     </script>
 </body>
 </html>
