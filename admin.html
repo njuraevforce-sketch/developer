@@ -288,12 +288,10 @@
     </div>
 
     <script>
-        // Инициализация Supabase
         const supabaseUrl = 'https://egjtgqhuvgfzbuwmzgvd.supabase.co';
         const supabaseKey = 'sb_publishable_63fSlgFk4VRjgJ340gp3Ag_2Xh8_OX4';
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // Загрузка заказов
         async function loadOrders() {
             const ordersList = document.getElementById('ordersList');
             const statusFilter = document.getElementById('statusFilter').value;
@@ -307,7 +305,6 @@
                     .select('*')
                     .order('created_at', { ascending: false });
 
-                // Применяем фильтры
                 if (statusFilter !== 'all') {
                     query = query.eq('status', statusFilter);
                 }
@@ -321,13 +318,10 @@
                     throw error;
                 }
 
-                // Скрываем сообщение об ошибке
                 document.getElementById('errorMessage').style.display = 'none';
 
-                // Обновление статистики
                 updateStats(orders);
 
-                // Отображение заказов
                 ordersList.innerHTML = '';
 
                 if (orders.length === 0) {
@@ -481,10 +475,8 @@
             });
         }
 
-        // Авто-обновление каждые 30 секунд
         setInterval(loadOrders, 30000);
 
-        // Инициализация
         window.addEventListener('DOMContentLoaded', function() {
             loadAppFilters();
             loadOrders();
