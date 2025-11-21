@@ -171,7 +171,6 @@
             cursor: pointer;
         }
 
-        /* Детальная страница приложения */
         .app-detail {
             position: fixed;
             top: 0;
@@ -400,7 +399,6 @@
     </style>
 </head>
 <body>
-    <!-- Шапка -->
     <div class="header">
         <h1>💰 Financial Apps</h1>
         <div class="support-badge">
@@ -409,14 +407,12 @@
         </div>
     </div>
 
-    <!-- Основной контент -->
     <div class="container">
         <div class="app-grid" id="appsGrid">
             <div class="loading">Загрузка приложений...</div>
         </div>
     </div>
 
-    <!-- Детальная страница приложения -->
     <div class="app-detail" id="appDetail">
         <div class="detail-header">
             <button class="back-btn" onclick="closeAppDetail()">←</button>
@@ -468,7 +464,6 @@
         </div>
     </div>
 
-    <!-- Кнопка админа -->
     <a href="admin.html" class="admin-fab">👨‍💼</a>
 
     <script>
@@ -477,7 +472,6 @@
         const supabaseKey = 'sb_publishable_63fSlgFk4VRjgJ340gp3Ag_2Xh8_OX4';
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // База данных приложений с изображениями
         const applications = [
             {
                 id: 1,
@@ -644,7 +638,6 @@
             }
         ];
 
-        // Загрузка приложений
         function loadApplications() {
             const appsGrid = document.getElementById('appsGrid');
             appsGrid.innerHTML = '';
@@ -676,17 +669,14 @@
             });
         }
 
-        // Открытие детальной страницы
         function openAppDetail(appId) {
             const app = applications.find(a => a.id === appId);
             const detail = document.getElementById('appDetail');
             
-            // Заполняем данные
             document.getElementById('detailIcon').textContent = app.icon;
             document.getElementById('detailTitle').textContent = app.name;
             document.getElementById('detailSubtitle').textContent = app.description;
             
-            // Заполняем галерею
             const gallery = document.getElementById('appGallery');
             gallery.innerHTML = app.images.map(img => 
                 `<div class="gallery-item">
@@ -694,7 +684,6 @@
                 </div>`
             ).join('');
             
-            // Заполняем функции
             const features = document.getElementById('appFeatures');
             features.innerHTML = app.features.map(feature => `
                 <div class="feature-item">
@@ -703,25 +692,21 @@
                 </div>
             `).join('');
             
-            // Показываем детальную страницу
             detail.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
-        // Закрытие детальной страницы
         function closeAppDetail() {
             const detail = document.getElementById('appDetail');
             detail.classList.remove('active');
             document.body.style.overflow = 'auto';
         }
 
-        // Открытие формы заказа
         function openOrderForm() {
             const appName = document.getElementById('detailTitle').textContent;
             window.location.href = `order.html?app=${encodeURIComponent(appName)}`;
         }
 
-        // Инициализация
         window.addEventListener('DOMContentLoaded', loadApplications);
     </script>
 </body>
