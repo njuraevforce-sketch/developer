@@ -217,12 +217,6 @@
             font-size: 64px;
             margin-bottom: 16px;
         }
-
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-        }
     </style>
 </head>
 <body>
@@ -311,19 +305,15 @@
     </div>
 
     <script>
-        // Инициализация Supabase
         const supabaseUrl = 'https://egjtgqhuvgfzbuwmzgvd.supabase.co';
         const supabaseKey = 'sb_publishable_63fSlgFk4VRjgJ340gp3Ag_2Xh8_OX4';
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // Получение параметров из URL
         const urlParams = new URLSearchParams(window.location.search);
         const appName = urlParams.get('app') || 'Приложение';
 
-        // Заполнение информации о приложении
         document.getElementById('orderAppName').textContent = appName;
 
-        // Обработка формы
         document.getElementById('orderForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -343,7 +333,6 @@
             };
 
             try {
-                // Сохранение заказа в Supabase
                 const { data, error } = await supabase
                     .from('orders')
                     .insert([order])
@@ -353,11 +342,9 @@
                     throw error;
                 }
 
-                // Показ успешного сообщения
                 document.getElementById('orderForm').style.display = 'none';
                 document.getElementById('successMessage').style.display = 'block';
                 
-                // Перенаправление через 5 секунд
                 setTimeout(() => {
                     window.location.href = 'index.html';
                 }, 5000);
