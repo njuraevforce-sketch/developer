@@ -1,10 +1,12 @@
 {
   "name": "financial-apps-generator",
   "version": "1.0.0",
+  "description": "Financial Apps Generator with Supabase",
   "scripts": {
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev"
   },
   "devDependencies": {
-    "wrangler": "^4.0.0"
+    "wrangler": "^4.50.0"
   }
 }
