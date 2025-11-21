@@ -1045,16 +1045,15 @@
     </a>
 
     <script>
-        // ... (остальной JavaScript код остается таким же, как в предыдущей версии)
         // Инициализация Supabase с правильными ключами
         let supabase;
 
         function initializeSupabase() {
             try {
-                if (typeof supabase === 'undefined' && window.supabase) {
-                    const supabaseUrl = 'https://egjtgqhuvgfzbuwmzgvd.supabase.co';
-                    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVnanRncWh1dmdmemJ1d216Z3ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0MjM3MjAsImV4cCI6MjA2OTk5OTcyMH0.MPb75wP1qXLkFFO5YJ8KK9Qw1qw8J1DD81UvZlWhIXw';
-                    
+                const supabaseUrl = 'https://egjtgqhuvgfzbuwmzgvd.supabase.co';
+                const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVnanRncWh1dmdmemJ1d216Z3ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0MjM3MjAsImV4cCI6MjA2OTk5OTcyMH0.MPb75wP1qXLkFFO5YJ8KK9Qw1qw8J1DD81UvZlWhIXw';
+                
+                if (window.supabase) {
                     supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
                     console.log('Supabase инициализирован с правильными ключами');
                     return true;
@@ -1069,9 +1068,8 @@
             }
         }
 
-        // Система перевода (остается без изменений)
+        // Система перевода
         const translations = {
-            // ... (все переводы остаются такими же)
             ru: {
                 // Общие
                 'header.title': '🚀 Financial Apps',
@@ -1738,6 +1736,8 @@
             }
 
             const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.textContent;
+            
             submitBtn.disabled = true;
             submitBtn.textContent = currentLanguage === 'ru' ? 'Отправка...' :
                                    currentLanguage === 'en' ? 'Sending...' :
@@ -1756,6 +1756,8 @@
             };
 
             try {
+                console.log('Отправка заказа:', order);
+                
                 const { data, error } = await supabase
                     .from('orders')
                     .insert([order])
@@ -1765,8 +1767,11 @@
                     throw error;
                 }
 
+                console.log('Заказ успешно сохранен:', data);
+                
                 document.getElementById('orderForm').style.display = 'none';
                 document.getElementById('successMessage').style.display = 'block';
+                document.getElementById('orderErrorMessage').style.display = 'none';
                 
                 setTimeout(() => {
                     showScreen('appsScreen');
@@ -1774,12 +1779,14 @@
 
             } catch (error) {
                 console.error('Error saving order:', error);
-                showOrderError(currentLanguage === 'ru' ? 'Ошибка при отправке заявки. Пожалуйста, попробуйте еще раз или свяжитесь с поддержкой.' :
-                              currentLanguage === 'en' ? 'Error sending application. Please try again or contact support.' :
-                              currentLanguage === 'fr' ? 'Erreur lors de l\'envoi de la demande. Veuillez réessayer ou contacter le support.' :
-                              'خطأ في إرسال الطلب. يرجى المحاولة مرة أخرى أو الاتصال بالدعم.');
+                showOrderError(currentLanguage === 'ru' ? 
+                    'Ошибка при отправке заявки: ' + error.message + '. Пожалуйста, попробуйте еще раз или свяжитесь с поддержкой.' :
+                    currentLanguage === 'en' ? 'Error sending application: ' + error.message + '. Please try again or contact support.' :
+                    currentLanguage === 'fr' ? 'Erreur lors de l\'envoi de la demande: ' + error.message + '. Veuillez réessayer ou contacter le support.' :
+                    'خطأ في إرسال الطلب: ' + error.message + '. يرجى المحاولة مرة أخرى أو الاتصال بالدعم.');
+            } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = translations[currentLanguage]['order.form.submit'];
+                submitBtn.textContent = originalText;
             }
         });
 
@@ -1787,6 +1794,8 @@
             const errorDiv = document.getElementById('orderErrorMessage');
             errorDiv.textContent = message;
             errorDiv.style.display = 'block';
+            // Прокручиваем к ошибке
+            errorDiv.scrollIntoView({ behavior: 'smooth' });
         }
 
         // Инициализация при загрузке
